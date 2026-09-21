@@ -2,25 +2,29 @@
 <?php
 session_start();
 
-if (isset($_POST['register'])) {
+$message = "";
 
+if (isset($_POST['register'])) {
+    $firstName = trim($_POST['firstName']);
+    $lastName = trim($_POST['lastName']);
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-    $confirmPassword = trim($_POST['confirmPassword']);
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirmPassword'];
 
-    if ($password !== $confirmPassword) {
-        $error = "Passwords do not match.";
-    } elseif ($username == "" || $email == "" || $password == "") {
-        $error = "Please fill in all fields.";
+    if (
+        empty($firstName) || empty($lastName) ||
+        empty($username) || empty($email) ||
+        empty($password) || empty($confirmPassword)
+    ) {
+        $message = "Please fill in all fields.";
+    } elseif ($password !== $confirmPassword) {
+        $message = "Passwords do not match.";
     } else {
-        // Save registration data in session
+        $_SESSION['registered'] = true;
         $_SESSION['username'] = $username;
-        $_SESSION['email'] = $email;
 
-        // Redirect to login
-        header("Location: login.php");
-        exit();
+        $message = "Registration successful!";
     }
 }
 ?>
@@ -28,421 +32,256 @@ if (isset($_POST['register'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Create Account | Math Game</title>
+    <title>Create Account</title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
         }
 
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
             min-height: 100vh;
-            color: white;
-        }
-
-        /* Background */
-
-        .background {
-            min-height: 100vh;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
+            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 20px;
-
-            background:
-                radial-gradient(
-                    circle at top left,
-                    #536dff,
-                    transparent 35%
-                ),
-                radial-gradient(
-                    circle at bottom right,
-                    #984dff,
-                    transparent 35%
-                ),
-                #080c1c;
         }
 
-        /* Register Card */
-
-        .register-box {
+        .register-container {
             width: 100%;
-            max-width: 450px;
-
-            padding: 40px;
-
-            background: rgba(255, 255, 255, 0.08);
-
-            border: 1px solid rgba(255, 255, 255, 0.15);
-
-            border-radius: 25px;
-
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-
-            box-shadow:
-                0 25px 60px rgba(0, 0, 0, 0.45);
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
 
-        /* Logo */
-
-        .logo {
-            width: 65px;
-            height: 65px;
-
-            margin: 0 auto 18px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: 18px;
-
-            background: linear-gradient(
-                135deg,
-                #536dff,
-                #984dff
-            );
-
-            font-size: 27px;
-            font-weight: 800;
-
-            box-shadow:
-                0 10px 30px rgba(83, 109, 255, 0.4);
-        }
-
-        /* Heading */
-
-        h1 {
+        .header {
             text-align: center;
+            margin-bottom: 25px;
+        }
 
-            font-size: 29px;
-
+        .header h1 {
+            color: #222;
+            font-size: 30px;
             margin-bottom: 8px;
         }
 
-        .subtitle {
-            text-align: center;
-
-            color: #aab3c8;
-
-            font-size: 14px;
-
-            margin-bottom: 28px;
-        }
-
-        /* Error */
-
-        .error {
-            padding: 12px;
-
-            margin-bottom: 18px;
-
-            border-radius: 10px;
-
-            background: rgba(255, 70, 70, 0.12);
-
-            border: 1px solid rgba(255, 70, 70, 0.3);
-
-            color: #ff9090;
-
-            text-align: center;
-
+        .header p {
+            color: #777;
             font-size: 14px;
         }
 
-        /* Input */
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
 
-        .input-group {
+        .form-group {
             margin-bottom: 17px;
+            flex: 1;
         }
 
-        .input-group label {
+        .form-group label {
             display: block;
-
-            margin-bottom: 7px;
-
-            color: #e3e7f1;
-
+            color: #333;
             font-size: 14px;
-
             font-weight: 600;
+            margin-bottom: 7px;
         }
 
-        .input-group input {
+        .form-group input {
             width: 100%;
-
-            padding: 14px 16px;
-
+            padding: 13px 15px;
+            border: 1px solid #ddd;
             border-radius: 12px;
-
-            border: 1px solid rgba(255, 255, 255, 0.15);
-
-            background: rgba(255, 255, 255, 0.07);
-
-            color: white;
-
             outline: none;
-
-            font-size: 15px;
-
+            font-size: 14px;
             transition: 0.3s;
+            background: #f9f9fb;
         }
 
-        .input-group input::placeholder {
-            color: #7e899f;
+        .form-group input:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
         }
-
-        .input-group input:focus {
-            border-color: #6684ff;
-
-            background: rgba(255, 255, 255, 0.1);
-
-            box-shadow:
-                0 0 0 3px rgba(102, 132, 255, 0.12);
-        }
-
-        /* Terms */
 
         .terms {
             display: flex;
-
             align-items: flex-start;
-
             gap: 8px;
-
-            margin: 5px 0 22px;
-
-            color: #929db3;
-
-            font-size: 13px;
-
-            line-height: 1.4;
+            margin: 5px 0 20px;
+            font-size: 12px;
+            color: #777;
         }
 
         .terms input {
-            margin-top: 3px;
-
-            accent-color: #6684ff;
+            margin-top: 2px;
         }
 
         .terms a {
-            color: #7894ff;
-
+            color: #667eea;
             text-decoration: none;
+            font-weight: 600;
         }
 
-        /* Button */
-
-        button {
+        .register-btn {
             width: 100%;
-
-            padding: 15px;
-
+            padding: 14px;
             border: none;
-
             border-radius: 12px;
-
-            background: linear-gradient(
-                135deg,
-                #536dff,
-                #984dff
-            );
-
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-
-            font-size: 16px;
-
-            font-weight: 700;
-
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-
             transition: 0.3s;
-
-            box-shadow:
-                0 10px 25px rgba(83, 109, 255, 0.3);
         }
 
-        button:hover {
+        .register-btn:hover {
             transform: translateY(-2px);
-
-            box-shadow:
-                0 15px 35px rgba(83, 109, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Login */
-
-        .login-text {
+        .login-link {
             text-align: center;
-
-            margin-top: 23px;
-
-            color: #929db3;
-
+            margin-top: 20px;
+            color: #777;
             font-size: 14px;
         }
 
-        .login-text a {
-            color: #7894ff;
-
+        .login-link a {
+            color: #667eea;
             text-decoration: none;
-
-            font-weight: 700;
+            font-weight: 600;
         }
 
-        .login-text a:hover {
-            text-decoration: underline;
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            background: #f1f3ff;
+            color: #5a67d8;
+            font-size: 13px;
         }
 
-        /* Mobile */
-
-        @media (max-width: 480px) {
-
-            .register-box {
-                padding: 30px 25px;
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 25px 20px;
             }
 
-            h1 {
-                font-size: 25px;
+            .form-row {
+                flex-direction: column;
+                gap: 0;
             }
         }
-
     </style>
-
 </head>
 
 <body>
 
-<div class="background">
+<div class="register-container">
 
-    <div class="register-box">
-
-        <div class="logo">
-            M
-        </div>
-
+    <div class="header">
         <h1>Create Account</h1>
+        <p>Join us and start your journey</p>
+    </div>
 
-        <p class="subtitle">
-            Join the Math Game and start playing
-        </p>
+    <?php if ($message != ""): ?>
+        <div class="message">
+            <?php echo htmlspecialchars($message); ?>
+        </div>
+    <?php endif; ?>
 
-        <?php if (isset($error)): ?>
+    <form method="POST">
 
-            <div class="error">
-                <?php echo $error; ?>
-            </div>
-
-        <?php endif; ?>
-
-
-        <form method="POST">
-
-            <div class="input-group">
-
-                <label>Username</label>
-
+        <div class="form-row">
+            <div class="form-group">
+                <label>First Name</label>
                 <input
                     type="text"
-                    name="username"
-                    placeholder="Choose a username"
+                    name="firstName"
+                    placeholder="First name"
                     required
                 >
-
             </div>
 
-
-            <div class="input-group">
-
-                <label>Email Address</label>
-
+            <div class="form-group">
+                <label>Last Name</label>
                 <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
+                    type="text"
+                    name="lastName"
+                    placeholder="Last name"
                     required
                 >
-
             </div>
+        </div>
 
-
-            <div class="input-group">
-
-                <label>Password</label>
-
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Create a password"
-                    required
-                >
-
-            </div>
-
-
-            <div class="input-group">
-
-                <label>Confirm Password</label>
-
-                <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Confirm your password"
-                    required
-                >
-
-            </div>
-
-
-            <label class="terms">
-
-                <input
-                    type="checkbox"
-                    required
-                >
-
-                <span>
-                    I agree to the
-                    <a href="#">Terms & Conditions</a>
-                </span>
-
-            </label>
-
-
-            <button
-                type="submit"
-                name="register"
+        <div class="form-group">
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                placeholder="Choose a username"
+                required
             >
-                Create Account
-            </button>
+        </div>
 
-        </form>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+        </div>
 
+        <div class="form-group">
+            <label>Password</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Create a password"
+                required
+            >
+        </div>
 
-        <p class="login-text">
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                required
+            >
+        </div>
 
-            Already have an account?
+        <div class="terms">
+            <input type="checkbox" required>
+            <span>
+                I agree to the
+                <a href="#">Terms & Conditions</a>
+            </span>
+        </div>
 
-            <a href="login.php">
-                Login
-            </a>
+        <button type="submit" name="register" class="register-btn">
+            Create Account
+        </button>
 
-        </p>
+    </form>
 
+    <div class="login-link">
+        Already have an account?
+        <a href="login.php">Login</a>
     </div>
 
 </div>
