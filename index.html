@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --green: #10b981;
+      --red: #ef4444;
+      --sidebar: #111827;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar);
+      color: white;
+      padding: 24px 16px;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 20;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 40px;
+      padding: 0 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #818cf8, #4f46e5);
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: .2s;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: #1f2937;
+      color: white;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      bottom: 24px;
+      left: 16px;
+      right: 16px;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid #374151;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #818cf8;
+      font-weight: 700;
+    }
+
+    .user small {
+      color: #9ca3af;
+    }
+
+    /* Main */
+    .main {
+      width: calc(100% - 250px);
+      margin-left: 250px;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border-radius: 10px;
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(15, 23, 42, .03);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #eef2ff;
+      color: var(--primary);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 14px 0 8px;
+    }
+
+    .trend {
+      font-size: 13px;
+    }
+
+    .positive {
+      color: var(--green);
+    }
+
+    .negative {
+      color: var(--red);
+    }
+
+    /* Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-header h2 {
+      font-size: 17px;
+    }
+
+    .card-header span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Chart */
+    .chart {
+      height: 280px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      background:
+        linear-gradient(to bottom,
+          transparent 24%,
+          #eef0f5 25%,
+          transparent 26%,
+          transparent 49%,
+          #eef0f5 50%,
+          transparent 51%,
+          transparent 74%,
+          #eef0f5 75%,
+          transparent 76%);
+    }
+
+    .chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-line {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chart-area {
+      fill: url(#gradient);
+    }
+
+    /* Activity */
+    .activity {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #f3f4f6;
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .activity-info span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Table */
+    .table-card {
+      margin-top: 20px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 15px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status {
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .status.pending {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    /* Mobile */
+    .mobile-menu {
+      display: none;
+      background: white;
+      border: 1px solid var(--border);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: .25s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        width: 100%;
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .topbar-left {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .actions .btn:not(.btn-primary) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        display: none;
+      }
+
+      .page-title h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      Nova
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="active">⌂ <span>Dashboard</span></a>
+      <a href="#">▦ <span>Analytics</span></a>
+      <a href="#">◫ <span>Projects</span></a>
+      <a href="#">◎ <span>Customers</span></a>
+      <a href="#">◌ <span>Messages</span></a>
+      <a href="#">⚙ <span>Settings</span></a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="user">
+        <div class="avatar">JD</div>
+        <div>
+          <strong>John Doe</strong>
+          <small>Administrator</small>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+
+        <div class="page-title">
+          <h1>Good afternoon, John 👋</h1>
+          <p>Here's what's happening with your business today.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn">Download</button>
+        <button class="btn btn-primary">+ New Project</button>
+      </div>
+
+    </header>
+
+    <!-- Statistics -->
+    <section class="stats">
+
+      <div class="card">
+        <div class="stat-top">
+          <span>Total Revenue</span>
+          <div class="stat-icon">↗</div>
+        </div>
+        <div class="stat-value">$84,240</div>
+        <div class="trend positive">↑ 12.5% from last month</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-top">
+          <span>Customers</span>
+          <div class="stat-icon">♙</div>
+        </div>
+        <div class="stat-value">12,840</div>
+        <div class="trend positive">↑ 8.2% from last month</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-top">
+          <span>Orders</span>
+          <div class="stat-icon">▣</div>
+        </div>
+        <div class="stat-value">3,642</div>
+        <div class="trend positive">↑ 5.7% from last month</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-top">
+          <span>Conversion</span>
+          <div class="stat-icon">◈</div>
+        </div>
+        <div class="stat-value">6.84%</div>
+        <div class="trend negative">↓ 1.2% from last month</div>
+      </div>
+
+    </section>
+
+    <!-- Main Content -->
+    <section class="content-grid">
+
+      <!-- Revenue Chart -->
+      <div class="card">
+
+        <div class="card-header">
+          <div>
+            <h2>Revenue Overview</h2>
+            <span>Monthly revenue performance</span>
+          </div>
+
+          <select class="btn">
+            <option>Last 7 months</option>
+            <option>Last 30 days</option>
+            <option>This year</option>
+          </select>
+        </div>
+
+        <div class="chart">
+
+          <svg viewBox="0 0 800 280" preserveAspectRatio="none">
+
+            <defs>
+              <linearGradient id="gradient"
+                x1="0" y1="0"
+                x2="0" y2="1">
+
+                <stop offset="0%"
+                  stop-color="#6366f1"
+                  stop-opacity=".25" />
+
+                <stop offset="100%"
+                  stop-color="#6366f1"
+                  stop-opacity="0" />
+              </linearGradient>
+            </defs>
+
+            <path
+              class="chart-area"
+              d="M0 220
+                 C80 210 90 150 160 170
+                 S240 210 300 130
+                 S380 150 440 110
+                 S520 80 570 115
+                 S650 50 720 75
+                 S760 50 800 30
+                 L800 280 L0 280 Z" />
+
+            <path
+              class="chart-line"
+              d="M0 220
+                 C80 210 90 150 160 170
+                 S240 210 300 130
+                 S380 150 440 110
+                 S520 80 570 115
+                 S650 50 720 75
+                 S760 50 800 30" />
+
+          </svg>
+
+        </div>
+
+      </div>
+
+      <!-- Activity -->
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Recent Activity</h2>
+          <span>View all</span>
+        </div>
+
+        <div class="activity">
+
+          <div class="activity-item">
+            <div class="activity-icon">🛒</div>
+            <div class="activity-info">
+              <strong>New order received</strong>
+              <span>Order #10482 · 5 min ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">👤</div>
+            <div class="activity-info">
+              <strong>New customer joined</strong>
+              <span>Sarah Williams · 24 min ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">💳</div>
+            <div class="activity-info">
+              <strong>Payment received</strong>
+              <span>$1,240.00 · 1 hour ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">📦</div>
+            <div class="activity-info">
+              <strong>Order shipped</strong>
+              <span>Order #10471 · 2 hours ago</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Orders -->
+    <section class="card table-card">
+
+      <div class="card-header">
+        <div>
+          <h2>Recent Orders</h2>
+          <span>Your latest transactions</span>
+        </div>
+
+        <button class="btn">View all</button>
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td>#10482</td>
+              <td>Sarah Williams</td>
+              <td>Sep 21, 2026</td>
+              <td>$240.00</td>
+              <td><span class="status">Completed</span></td>
+            </tr>
+
+            <tr>
+              <td>#10481</td>
+              <td>Michael Chen</td>
+              <td>Sep 21, 2026</td>
+              <td>$820.00</td>
+              <td><span class="status">Completed</span></td>
+            </tr>
+
+            <tr>
+              <td>#10480</td>
+              <td>Emma Davis</td>
+              <td>Sep 20, 2026</td>
+              <td>$145.00</td>
+              <td><span class="status pending">Pending</span></td>
+            </tr>
+
+            <tr>
+              <td>#10479</td>
+              <td>James Wilson</td>
+              <td>Sep 20, 2026</td>
+              <td>$560.00</td>
+              <td><span class="status">Completed</span></td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  function toggleSidebar() {
+    document
+      .getElementById("sidebar")
+      .classList.toggle("open");
+  }
+</script>
+
+</body>
+</html>
