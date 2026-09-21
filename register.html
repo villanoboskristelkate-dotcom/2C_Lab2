@@ -1,0 +1,452 @@
+```php
+<?php
+session_start();
+
+if (isset($_POST['register'])) {
+
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirmPassword = trim($_POST['confirmPassword']);
+
+    if ($password !== $confirmPassword) {
+        $error = "Passwords do not match.";
+    } elseif ($username == "" || $email == "" || $password == "") {
+        $error = "Please fill in all fields.";
+    } else {
+        // Save registration data in session
+        $_SESSION['username'] = $username;
+        $_SESSION['email'] = $email;
+
+        // Redirect to login
+        header("Location: login.php");
+        exit();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | Math Game</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Background */
+
+        .background {
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #536dff,
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    #984dff,
+                    transparent 35%
+                ),
+                #080c1c;
+        }
+
+        /* Register Card */
+
+        .register-box {
+            width: 100%;
+            max-width: 450px;
+
+            padding: 40px;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            border-radius: 25px;
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Logo */
+
+        .logo {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 18px;
+
+            background: linear-gradient(
+                135deg,
+                #536dff,
+                #984dff
+            );
+
+            font-size: 27px;
+            font-weight: 800;
+
+            box-shadow:
+                0 10px 30px rgba(83, 109, 255, 0.4);
+        }
+
+        /* Heading */
+
+        h1 {
+            text-align: center;
+
+            font-size: 29px;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #aab3c8;
+
+            font-size: 14px;
+
+            margin-bottom: 28px;
+        }
+
+        /* Error */
+
+        .error {
+            padding: 12px;
+
+            margin-bottom: 18px;
+
+            border-radius: 10px;
+
+            background: rgba(255, 70, 70, 0.12);
+
+            border: 1px solid rgba(255, 70, 70, 0.3);
+
+            color: #ff9090;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+        /* Input */
+
+        .input-group {
+            margin-bottom: 17px;
+        }
+
+        .input-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #e3e7f1;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+
+            padding: 14px 16px;
+
+            border-radius: 12px;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            background: rgba(255, 255, 255, 0.07);
+
+            color: white;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: 0.3s;
+        }
+
+        .input-group input::placeholder {
+            color: #7e899f;
+        }
+
+        .input-group input:focus {
+            border-color: #6684ff;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            box-shadow:
+                0 0 0 3px rgba(102, 132, 255, 0.12);
+        }
+
+        /* Terms */
+
+        .terms {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 8px;
+
+            margin: 5px 0 22px;
+
+            color: #929db3;
+
+            font-size: 13px;
+
+            line-height: 1.4;
+        }
+
+        .terms input {
+            margin-top: 3px;
+
+            accent-color: #6684ff;
+        }
+
+        .terms a {
+            color: #7894ff;
+
+            text-decoration: none;
+        }
+
+        /* Button */
+
+        button {
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: linear-gradient(
+                135deg,
+                #536dff,
+                #984dff
+            );
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            box-shadow:
+                0 10px 25px rgba(83, 109, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 15px 35px rgba(83, 109, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Login */
+
+        .login-text {
+            text-align: center;
+
+            margin-top: 23px;
+
+            color: #929db3;
+
+            font-size: 14px;
+        }
+
+        .login-text a {
+            color: #7894ff;
+
+            text-decoration: none;
+
+            font-weight: 700;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 480px) {
+
+            .register-box {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="background">
+
+    <div class="register-box">
+
+        <div class="logo">
+            M
+        </div>
+
+        <h1>Create Account</h1>
+
+        <p class="subtitle">
+            Join the Math Game and start playing
+        </p>
+
+        <?php if (isset($error)): ?>
+
+            <div class="error">
+                <?php echo $error; ?>
+            </div>
+
+        <?php endif; ?>
+
+
+        <form method="POST">
+
+            <div class="input-group">
+
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Choose a username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>Email Address</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Create a password"
+                    required
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>Confirm Password</label>
+
+                <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    required
+                >
+
+            </div>
+
+
+            <label class="terms">
+
+                <input
+                    type="checkbox"
+                    required
+                >
+
+                <span>
+                    I agree to the
+                    <a href="#">Terms & Conditions</a>
+                </span>
+
+            </label>
+
+
+            <button
+                type="submit"
+                name="register"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p class="login-text">
+
+            Already have an account?
+
+            <a href="login.php">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+```
