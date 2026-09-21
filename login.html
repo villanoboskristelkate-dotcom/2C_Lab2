@@ -1,0 +1,408 @@
+```php
+<?php
+session_start();
+
+if (isset($_POST['login'])) {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    // Sample login
+    if ($username === "admin" && $password === "12345") {
+        $_SESSION['username'] = $username;
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        $error = "Invalid username or password.";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Math Game</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Background */
+        .background {
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #536dff,
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    #984dff,
+                    transparent 35%
+                ),
+                #080c1c;
+        }
+
+        /* Login Card */
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+
+            padding: 45px 40px;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            border-radius: 25px;
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Logo */
+        .logo {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 18px;
+
+            background: linear-gradient(
+                135deg,
+                #536dff,
+                #984dff
+            );
+
+            font-size: 28px;
+            font-weight: 800;
+
+            box-shadow:
+                0 10px 30px rgba(83, 109, 255, 0.4);
+        }
+
+        /* Heading */
+        h1 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aab3c8;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Error */
+        .error {
+            background: rgba(255, 70, 70, 0.12);
+
+            border: 1px solid rgba(255, 70, 70, 0.3);
+
+            color: #ff9090;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+        /* Input */
+        .input-box {
+            margin-bottom: 20px;
+        }
+
+        .input-box label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #e3e7f1;
+        }
+
+        .input-box input {
+            width: 100%;
+
+            padding: 14px 16px;
+
+            border-radius: 12px;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            background: rgba(255, 255, 255, 0.07);
+
+            color: white;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: 0.3s;
+        }
+
+        .input-box input::placeholder {
+            color: #7e899f;
+        }
+
+        .input-box input:focus {
+            border-color: #6684ff;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            box-shadow:
+                0 0 0 3px rgba(102, 132, 255, 0.12);
+        }
+
+        /* Options */
+        .login-options {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin: 5px 0 25px;
+
+            font-size: 13px;
+        }
+
+        .login-options label {
+            color: #aab3c8;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+        .login-options input {
+            accent-color: #6684ff;
+        }
+
+        .login-options a {
+            color: #7894ff;
+
+            text-decoration: none;
+
+            font-weight: 600;
+        }
+
+        .login-options a:hover {
+            text-decoration: underline;
+        }
+
+        /* Button */
+        button {
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: linear-gradient(
+                135deg,
+                #536dff,
+                #984dff
+            );
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            box-shadow:
+                0 10px 25px rgba(83, 109, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 15px 35px rgba(83, 109, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin: 28px 0;
+
+            color: #6f7a91;
+
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+
+            flex: 1;
+
+            height: 1px;
+
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Register */
+        .register {
+            text-align: center;
+
+            color: #929db3;
+
+            font-size: 14px;
+        }
+
+        .register a {
+            color: #7894ff;
+
+            text-decoration: none;
+
+            font-weight: 700;
+        }
+
+        .register a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 35px 25px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="background">
+
+    <div class="login-box">
+
+        <div class="logo">M</div>
+
+        <h1>Welcome Back!</h1>
+
+        <p class="subtitle">
+            Login to continue your Math Game
+        </p>
+
+        <?php if (isset($error)): ?>
+            <div class="error">
+                <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST">
+
+            <div class="input-box">
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
+            </div>
+
+            <div class="input-box">
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <div class="login-options">
+
+                <label>
+                    <input type="checkbox">
+                    Remember me
+                </label>
+
+                <a href="#">Forgot Password?</a>
+
+            </div>
+
+            <button type="submit" name="login">
+                Login
+            </button>
+
+        </form>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <p class="register">
+            Don't have an account?
+            <a href="registration.php">Register</a>
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
